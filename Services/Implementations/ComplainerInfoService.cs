@@ -23,11 +23,7 @@ namespace ComplaintSystem.Services.Implementations
             {        
             var complainerInfos = await _uow.Repository<ComplainerInfo>().GetAll();
             var complainerInfosDto = _mapper.Map<List<ComplainerInfoDto>>(complainerInfos);
-                foreach (var item in complainerInfosDto)
-                {
-                    var complain = await _uow.Repository<Complain>().GetById(item.ComplainId);
-                    item.ComplainText = complain.ComplainText;
-                }
+              
              return complainerInfosDto;
             }
             catch (Exception ex)
@@ -78,6 +74,5 @@ namespace ComplaintSystem.Services.Implementations
                 throw new Exception("Error while deleting the complainer Info", e);
             }
         }
-
     }
 }

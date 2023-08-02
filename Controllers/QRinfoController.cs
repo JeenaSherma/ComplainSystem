@@ -4,6 +4,8 @@ using ComplaintSystem.Services.Interfaces;
 using ComplaintSystem.Services.QRGeneration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
+
 using QRCoder;
 
 namespace ComplaintSystem.Controllers
@@ -15,11 +17,13 @@ namespace ComplaintSystem.Controllers
     {
         private readonly IQRInfoService _qRInfoService;
         private readonly IQrCodeService _qrCodeService;
+        private readonly IWebHostEnvironment _env;
 
-        public QRinfoController(IQRInfoService qRInfoService, IQrCodeService qrCodeService)
+        public QRinfoController(IQRInfoService qRInfoService, IQrCodeService qrCodeService, IWebHostEnvironment env)
         {
             this._qRInfoService = qRInfoService;
             this._qrCodeService = qrCodeService;
+            this._env = env;
         }
 
 
@@ -45,6 +49,7 @@ namespace ComplaintSystem.Controllers
             return Ok(new ResponseModel<QRinfoDto> (true, qrInfo));
         }
 
+
         [HttpPost]
         public async Task<ActionResult<ResponseModel<QRinfoDto>>> GenerateQrCode(QRinfoDto qRinfoDto)
         {
@@ -52,21 +57,40 @@ namespace ComplaintSystem.Controllers
             {
                 string qrCodeText = qRinfoDto.QRCodeText;
                 int pixelSize = 50;
-                byte[] qrCodeBytes = _qrCodeService.GenerateQRCode(qrCodeText, pixelSize);
+                var (qrCodeBytes, uniqueFilename) = _qrCodeService.GenerateQRCode(qrCodeText, pixelSize);
 
-                // Save the QR code image to the database
-                qRinfoDto.QRImagePath = "qr_code.png";
-                await _qRInfoService.SaveQRInfo(qRinfoDto);
+               
+                string wwwrootPath = _env.WebRootPath;
+                string qrImagePath = Path.Combine(wwwrootPath, "images", uniqueFilename);
+                await System.IO.File.WriteAllBytesAsync(qrImagePath, qrCodeBytes);
+
+               
+                qRinfoDto.QRImagePath = $"/images/{uniqueFilename}";
+
                 
-                return File(qrCodeBytes, "image/png", "qr_code.png");
+                await _qRInfoService.SaveQRInfo(qRinfoDto);
+
+               
+                return new JsonResult(new { QRImagePath = qRinfoDto.QRImagePath });
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new ResponseModel<QRinfoDto>(false, null!, ex.Message));
             }
         }
+        [HttpGet("municipality/{municipalityId}")]
+        public async Task<ActionResult<ResponseModel<QRinfoDto>>> GetQrInfoByMunicipalityId(int MunicipalityId)
+        {
+            var qrInfo = await _qRInfoService.GetQrinfoByMunicipalityId(MunicipalityId);
+            if (qrInfo == null)
+            {
+                return NotFound(new ResponseModel<QRinfoDto>(false, data: null, "No qr found"));
+            }
+            return Ok(new ResponseModel<QRinfoDto>(true, qrInfo));
+        }
 
-       [HttpPatch("{id}")]
+
+        [HttpPatch("{id}")]
         public async Task<ActionResult<ResponseModel<QRinfoDto>>> UpdateQRInfo(int id, QRinfoDto qRinfoDto)
         {
             if(id != qRinfoDto.Id)
@@ -95,8 +119,8 @@ namespace ComplaintSystem.Controllers
                 return BadRequest(new ResponseModel<List<DepartmentDto>>(false, null!, ex.Message));
             }
         }
-        
 
 
     }
 }
+

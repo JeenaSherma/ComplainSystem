@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using Azure;
 using ComplaintSystem.Dtos;
 using ComplaintSystem.Model;
 using ComplaintSystem.Repository.Interfaces;
 using ComplaintSystem.Services.Interfaces;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static QRCoder.PayloadGenerator.ShadowSocksConfig;
+using System.Runtime.Intrinsics.X86;
 
 namespace ComplaintSystem.Services.Implementations
 {
@@ -52,6 +56,33 @@ namespace ComplaintSystem.Services.Implementations
                 throw new Exception("An Error occured while getting the Category", ex);
             }
         }
+
+        public async Task<List<CategoryDto>> GetCategoryByDepartmentId(int DepartmentId)
+        {
+            try
+            {
+                var categories = await uow.Repository<Category>().GetAllIncluding(c => c.Department);
+
+                var filteredCategories = categories.Where(c => c.DepartmentId == DepartmentId).ToList();
+
+                var categoriesDto = _mapper.Map<List<CategoryDto>>(filteredCategories);
+
+                return categoriesDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An Error occurred while getting the categories", ex);
+            }
+        }
+
+
+
+
+
+
+
+
+
 
         public async Task<CategoryDto> SaveCategory(CategoryDto categoryDto)
         {

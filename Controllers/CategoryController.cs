@@ -27,6 +27,18 @@ namespace ComplaintSystem.Controllers
             }
             return Ok(new ResponseModel<List<CategoryDto>>(true, categories));
         }
+        [HttpGet("GetByDepartmentId")]
+        public async Task<ActionResult<ResponseModel<List<CategoryDto>>>> GetAllCategoriesByDepartmentId(int DepartmentId) 
+        {
+            var categories = await  _categoryService.GetCategoryByDepartmentId(DepartmentId);
+            if (categories == null)
+            {
+               return NotFound(new ResponseModel<List<CategoryDto>>(false,data: null ,"No Categories found"));
+            }
+            return Ok(new ResponseModel<List<CategoryDto>>(true, categories));
+        }
+
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ResponseModel<CategoryDto>>> GetCategoryById(int id)
         {

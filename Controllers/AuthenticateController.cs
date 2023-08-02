@@ -31,7 +31,13 @@ namespace ComplaintSystem.Controllers
             var users = _userManager.Users.ToList();
             return Ok(users);
         }
+        [HttpGet("GetRoles")]
+        public ActionResult GetRoles()
+        {
+            var roles = _roleManager.Roles;
 
+            return Ok(roles.ToList().Select(i => new { i.Id, i.Name }));
+        }
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -57,7 +63,8 @@ namespace ComplaintSystem.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo
+                    expiration = token.ValidTo,
+                    role = userRoles
                 });
             }
             return Unauthorized();
@@ -94,7 +101,7 @@ namespace ComplaintSystem.Controllers
             return Ok(new Response { Status = "Success", Message = $"{model.Role} user created successfully!" });
         }
 
-
+        
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
@@ -102,7 +109,7 @@ namespace ComplaintSystem.Controllers
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
+                expires: DateTime.Now.AddDays(1),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                 );

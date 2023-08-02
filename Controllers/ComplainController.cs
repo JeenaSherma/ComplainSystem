@@ -40,11 +40,11 @@ namespace ComplaintSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ResponseModel<ComplainDto>>> SaveComplain(ComplainDto complainDto)
+        public async Task<ActionResult<ResponseModel<ComplainAndComplainInfoDto>>> SaveComplain(ComplainAndComplainInfoDto complainAndComplainInfoDto)
         {
             try
             {
-                return Ok(new ResponseModel<ComplainDto>(true, await _complainService.SaveComplain(complainDto)));
+                return Ok(new ResponseModel<ComplainAndComplainInfoDto>(true, await _complainService.SaveComplainandComplainInfo(complainAndComplainInfoDto)));
             }
             catch (Exception ex)
             {
@@ -52,6 +52,7 @@ namespace ComplaintSystem.Controllers
 
             }
         }
+       
         [HttpDelete("{id}")]
 
         public async Task<ActionResult<ResponseModel<ComplainDto>>> DeleteComplain(int id)

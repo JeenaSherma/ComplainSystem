@@ -50,17 +50,48 @@ namespace ComplaintSystem.Services.Implementations
         {
             try
             {
+              
                 var complain = _mapper.Map<Complain>(complainDto);
                 await _uow.Repository<Complain>().Add(complain);
                 await _uow.SaveChangesAsync();
-                return _mapper.Map<ComplainDto>(complain);
+               
+                var responseComplain = _uow.Repository<Complain>().GetAllIncluding(x => x.ComplainerInfo).Result.First(x => x.Id == complain.Id);
+                
+                
+                return _mapper.Map<ComplainDto>(responseComplain);
+
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occured while saving complain", ex);
             }
 
-        }
+        }  
+        
+        public async Task<ComplainAndComplainInfoDto> SaveComplainandComplainInfo(ComplainAndComplainInfoDto complainAndComplainInfoDto)
+        {
+            try
+            {
+
+                var complain = _mapper.Map<Complain>(complainAndComplainInfoDto);
+                await _uow.Repository<Complain>().Add(complain);
+                //await _uow.SaveChangesAsync();
+
+                var complainId = complain.Id;
+                var complainInfo = _mapper.Map<ComplainerInfo>(complainAndComplainInfoDto);
+                complainInfo.ComplainId = complainId;
+                await _uow.Repository<ComplainerInfo>().Add(complainInfo);
+                await _uow.SaveChangesAsync();
+                var responseComplain = _uow.Repository<Complain>().GetAllIncluding(x => x.ComplainerInfo).Result.First(x => x.Id == complain.Id);
+                return _mapper.Map<ComplainAndComplainInfoDto>(responseComplain);
+               
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occured while saving complain", ex);
+            }
+
+        } 
         public async Task<int> DeleteComplain(int ComplainId)
         {
             try

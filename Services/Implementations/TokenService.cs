@@ -3,6 +3,7 @@ using ComplaintSystem.Dtos;
 using ComplaintSystem.Model;
 using ComplaintSystem.Repository.Interfaces;
 using ComplaintSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ComplaintSystem.Services.Implementations
 {
@@ -18,14 +19,15 @@ namespace ComplaintSystem.Services.Implementations
         }
         public async Task<List<TokenDto>> GetAllTokens()
         {
-            try {
-            var token = await _uof.Repository<Token>().GetAll();
-            var tokenDto = _mapper.Map<List<TokenDto>>(token);
-            return tokenDto;
+            try
+            {
+                var token = await _uof.Repository<Token>().GetAll();
+                var tokenDto = _mapper.Map<List<TokenDto>>(token);
+                return tokenDto;
             }
             catch (Exception ex)
             {
-                throw new Exception("Error while getting Tokens",ex);
+                throw new Exception("Error while getting Tokens", ex);
             }
         }
 
@@ -39,18 +41,39 @@ namespace ComplaintSystem.Services.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception("Error while getting token");
+                throw new Exception("Error while getting token", ex);
             }
         }
 
-        public async Task<TokenDto> SaveToken(TokenDto tokenDto)
+        //public async Task<TokenDto> SaveToken(TokenDto tokenDto)
+        //{
+        //    try
+        //    {
+        //        var token = _mapper.Map<Token>(tokenDto);
+        //        await _uof.Repository<Token>().Add(token);
+        //        await _uof.SaveChangesAsync();
+        //        return _mapper.Map<TokenDto>(token);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception("Error while saving token", ex);
+        //    }
+        //}
+        [HttpPost]
+        public async Task<TokenDto> SaveToken(int complaintId)
         {
             try
-            {
-                    var token = _mapper.Map<Token>(tokenDto);
+            {               
+                Guid newGuid = Guid.NewGuid();                
+                var token = new Token
+                {
+                    TokenValue = newGuid.ToString(),
+                    ComplainId = complaintId
+                };              
                 await _uof.Repository<Token>().Add(token);
                 await _uof.SaveChangesAsync();
-                return _mapper.Map<TokenDto>(token);
+                var tokenDto = _mapper.Map<TokenDto>(token);
+                return tokenDto;
             }
             catch (Exception ex)
             {

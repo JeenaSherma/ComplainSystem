@@ -2,6 +2,6 @@
 {
     public interface IQrCodeService
     {
-        byte[] GenerateQRCode(string qrCodeText, int pixelSize);
+        (byte[] qrCodeBytes, string filename) GenerateQRCode(string qrCodeText, int pixelSize);
     }
 }

@@ -10,9 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using QRCoder;
 using System.Drawing.Imaging;
-
-
-
+using Azure.Core;
+using ComplaintSystem.Model;
 
 namespace ComplaintSystem.Repository.Implementations
 {
@@ -20,11 +19,12 @@ namespace ComplaintSystem.Repository.Implementations
     {
         private readonly ApplicationDbContext _applicationContext;
         private readonly DbSet<TEntity> _dbSet;
-
+        
         public Repository(ApplicationDbContext applicationContext)
         {
             this._applicationContext = applicationContext;
             _dbSet = applicationContext.Set<TEntity>();
+          
 
         }
         public async Task<TEntity> GetById(int id) => await _dbSet.FindAsync(id);
@@ -53,7 +53,7 @@ namespace ComplaintSystem.Repository.Implementations
             }
             return await query.ToListAsync();
         }
-        
+          
 
     }
 }

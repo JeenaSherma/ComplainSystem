@@ -9,5 +9,6 @@ namespace ComplaintSystem.Services.Interfaces
         Task<QRinfoDto> SaveQRInfo(QRinfoDto QRInfoDto);
         Task<QRinfoDto> UpdateQRInfo(int QRId, QRinfoDto QRInfoDto);
         Task <int>DeleteQRInfo(int QRId);
+        Task<QRinfoDto> GetQrinfoByMunicipalityId (int MunicipalityId);
     }
 }

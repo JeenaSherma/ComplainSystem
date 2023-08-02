@@ -42,11 +42,12 @@ namespace ComplaintSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ResponseModel<TokenDto>>> SaveToken(TokenDto TokenDto)
+        public async Task<ActionResult<ResponseModel<TokenDto>>> SaveToken(int complainId)
         {
             try
             {
-                return Ok(new ResponseModel<TokenDto>(true, await _tokenService.SaveToken(TokenDto)));
+                var TokenDto = await _tokenService.SaveToken(complainId);
+                return Ok(new ResponseModel<TokenDto>(true, TokenDto));
 
             }
             catch (Exception ex)
@@ -54,42 +55,38 @@ namespace ComplaintSystem.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ResponseModel<TokenDto>(false, null!, ex.Message));
             }
         }
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PutDepartment(int id, TokenDto TokenDto)
-        {
-            if (id != TokenDto.Id)
+           
+            [HttpPatch("{id}")]
+            public async Task<IActionResult> UpdateToken(int id, TokenDto TokenDto)
             {
-                return BadRequest();
+                if (id != TokenDto.Id)
+                {
+                    return BadRequest();
+                }
+                try
+                {
+                    return Ok(new ResponseModel<TokenDto>(true, await _tokenService.UpdateToken(id, TokenDto)));
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
-            try
+
+            [HttpDelete("{id}")]
+            public async Task<IActionResult> DeleteToken(int id)
             {
-                return Ok(new ResponseModel<TokenDto>(true, await _tokenService.UpdateToken(id, TokenDto)));
+                try
+                {
+                    await _tokenService.DeleteToken(id);
+                    return NoContent();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new ResponseModel<List<TokenDto>>(false, null!, ex.Message));
+                }
             }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteToken(int id)
-        {
-            try
-            {
-                await _tokenService.DeleteToken(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResponseModel<List<TokenDto>>(false, null!, ex.Message));
-            }
-        }
-
-
-
-
-
-
-
     }
-}
+

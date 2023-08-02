@@ -16,6 +16,11 @@ namespace ComplaintSystem.Configs
             CreateMap<ComplainStatus, ComplainStatusDto>().ReverseMap();
             CreateMap<QRinfo, QRinfoDto>().ReverseMap();
             CreateMap<Token, TokenDto>().ReverseMap();
+            CreateMap<Complain, ComplainAndComplainInfoDto>().ReverseMap();
+            CreateMap<ComplainerInfo, ComplainAndComplainInfoDto>().ReverseMap();
+
+           
+
 
             CreateMap<ComplainerInfo, ComplainerInfoDto>()
            .ForMember(dest => dest.ComplainText, opt => opt.MapFrom(src => src.Complain.ComplainText));
@@ -27,8 +32,6 @@ namespace ComplaintSystem.Configs
 
             CreateMap<QRinfo, QRinfoDto>()
                  .ForMember(dest => dest.Municipalityname , opt => opt.MapFrom(src => src.Municipality.MunicipalityName));
-
-           
 
         }
 

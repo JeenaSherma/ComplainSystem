@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ComplaintSystem.Model
@@ -6,7 +7,12 @@ namespace ComplaintSystem.Model
     public class ComplainerInfo
     {
         public int Id { get; set; }
-        public string ComplainerEmail { get; set; }
+
+        [EmailAddress]
+        public string? Email { get; set; }
+        public string? Name { get; set; }
+        public int? PhoneNumber { get; set; }
+        public string? Address { get; set; }
 
         [ForeignKey("Complain")]
         public int ComplainId { get; set; }
