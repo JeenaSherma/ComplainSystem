@@ -6,56 +6,55 @@ using System.Collections;
 namespace ComplaintSystem.Repository.Implementations
 {
     public class UnitOfWork : IUnitOfWork
-    {   
-            private bool _disposed;
-            private Hashtable _repositories;
+    {
+        private bool _disposed;
+        private Hashtable _repositories;
         private readonly ApplicationDbContext _context;
 
         public UnitOfWork(ApplicationDbContext context)
-            {
+        {
             this._context = context;
         }
-    public IRepository<TEntity> Repository<TEntity>() where TEntity : class
+        public IRepository<TEntity> Repository<TEntity>() where TEntity : class
+        {
+            if (_repositories == null)
             {
-                if (_repositories == null)
-                {
-                    _repositories = new Hashtable();
-                }
-
-                var type = typeof(TEntity).Name;
-
-                if (!_repositories.ContainsKey(type))
-                {
-                    var repositoryType = typeof(Repository<>);
-                    var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
-                    _repositories.Add(type, repositoryInstance);
-                }
-
-                return (IRepository<TEntity>)_repositories[type];
+                _repositories = new Hashtable();
             }
 
-            public async Task<int> SaveChangesAsync()
+            var type = typeof(TEntity).Name;
+
+            if (!_repositories.ContainsKey(type))
             {
-                return await _context.SaveChangesAsync();
+                var repositoryType = typeof(Repository<>);
+                var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(TEntity)), _context);
+                _repositories.Add(type, repositoryInstance);
             }
 
-            protected virtual void Dispose(bool disposing)
+            return (IRepository<TEntity>)_repositories[type];
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await _context.SaveChangesAsync();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
             {
-                if (!_disposed)
+                if (disposing)
                 {
-                    if (disposing)
-                    {
-                        _context.Dispose();
-                    }
-
-                    _disposed = true;
+                    _context.Dispose();
                 }
-            }
 
-            public void Dispose()
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
+                _disposed = true;
             }
         }
+      public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+    }
 }

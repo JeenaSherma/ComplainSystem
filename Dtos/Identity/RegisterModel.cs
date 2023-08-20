@@ -14,5 +14,6 @@ namespace ComplaintSystem.Dtos.Identity
         [Required(ErrorMessage = "Password is required")]
         public string? Password { get; set; }
         public string Role { get; set; }
+        public int? BranchId { get; set; }
     }
 }

@@ -47,6 +47,20 @@ namespace ComplaintSystem.Services.Implementations
                 throw new Exception("An Error occured while getting the department", ex);
             }
         }
+        //public async Task<List<DepartmentDto>> GetDepartmentByWardId(int wardID)
+        // {
+        //     try
+        //     {
+        //         var department = await uow.Repository<Department>().GetAll();
+        //         var filteredDepartment = department.Where(c=>c.BranchId == wardID).ToList();
+        //         var departmentDto = _mapper.Map<List<DepartmentDto>>(filteredDepartment);
+        //         return departmentDto;
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         throw new Exception("An error occured while getting the department", ex);
+        //     }
+        // }
 
         public async Task<DepartmentDto> SaveDepartment(DepartmentDto departmentDto)
         {
@@ -60,7 +74,7 @@ namespace ComplaintSystem.Services.Implementations
             }
             catch (Exception ex)
             {
-                throw new Exception("An error occured while saving data in database", ex);
+                throw new Exception("An error occured while saving department in database", ex);
             }
         }
 

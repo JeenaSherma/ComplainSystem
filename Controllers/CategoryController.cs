@@ -1,4 +1,5 @@
 ﻿using ComplaintSystem.Dtos;
+using ComplaintSystem.Dtos.Pagination;
 using ComplaintSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -6,15 +7,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ComplaintSystem.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController,Authorize]
+    
+    [Route("api/category")]
+    [ApiController]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-
-        public CategoryController(ICategoryService categoryService)
+        private readonly IUrlHelper _urlHelper;
+       
+        public CategoryController(ICategoryService categoryService, IUrlHelper urlHelper)
         {
             this._categoryService = categoryService;
+            this._urlHelper = urlHelper;
+            
         }
 
         [HttpGet]
@@ -27,6 +32,84 @@ namespace ComplaintSystem.Controllers
             }
             return Ok(new ResponseModel<List<CategoryDto>>(true, categories));
         }
+
+
+        //[HttpGet("Pagination", Name = "GetAllCategoriesByPagination")]
+        // public async Task<ActionResult<PagedResponse<CategoryDto>>> GetAllCategoriesByPagination([FromQuery] PagingParams pagingParams)
+        // {
+        //     try
+        //     {
+        //         var pagedCategoriesDto = await _categoryService.GetAllCategoriesUsingPagination(pagingParams);
+
+        //         var outputModel = new OutputModel<CategoryDto>
+        //         {
+        //             Paging = pagedCategoriesDto.GetHeader(),
+        //             Items = pagedCategoriesDto.List
+        //         };
+
+
+        //         var pagedListDto = new PagedListDto<CategoryDto>(outputModel.Items, outputModel.Paging.PageNumber, outputModel.Paging.PageSize);
+
+        //         var links = PaginationHelper.GetLinks(pagedCategoriesDto, _urlHelper, "GetAllCategoriesByPagination");
+
+        //         var response = new PagedResponse<CategoryDto>(pagedListDto, links);
+
+        //         return Ok(response);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         var errorResponse = new ResponseModel<PagedListDto<CategoryDto>>(false, null, $"An error occurred: {ex.Message}");
+        //         return StatusCode(500, errorResponse);
+        //     }
+        // }
+
+        //[HttpGet("Pagination", Name = "GetAllCategories")]
+        //public async Task<IActionResult> GetAllC([FromQuery] PagingParams pagingParams)
+        //{
+
+
+        //    var pagedCategoriesDto = await _categoryService.GetAllCategoriesUsingPagination(pagingParams);
+
+
+        //    Response.Headers.Add("X-Pagination", pagedCategoriesDto.GetHeader().ToJson());
+
+        //    var outputModel = new OutputModel<CategoryDto>
+        //    {
+        //        Paging = pagedCategoriesDto.GetHeader(),
+        //        Links = PaginationHelper.GetLinks(pagedCategoriesDto, _urlHelper, "GetAllCategories"),
+
+        //        Items = pagedCategoriesDto.List,
+        //    };
+        //    return Ok(outputModel);
+
+        //}
+        [HttpGet("Pagination", Name = "GetAllCategories")]
+        public async Task<ActionResult<ResponseModel<OutputModel<CategoryDto>>>> GetAllC([FromQuery] PagingParams pagingParams)
+        {
+            try
+            {
+                var pagedCategoriesDto = await _categoryService.GetAllCategoriesUsingPagination(pagingParams);
+
+                var outputModel = new OutputModel<CategoryDto>
+                {
+                    Paging = pagedCategoriesDto.GetHeader(),
+                    Links = PaginationHelper.GetLinks(pagedCategoriesDto, _urlHelper, "GetAllCategories"),
+                    Items = pagedCategoriesDto.List,
+                };
+
+                var responseModel = new ResponseModel<OutputModel<CategoryDto>>(true, outputModel);
+
+                return Ok(responseModel);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ResponseModel<OutputModel<CategoryDto>>(false, null, $"An error occurred: {ex.Message}");
+                return StatusCode(500, errorResponse);
+            }
+        }
+
+
+
         [HttpGet("GetByDepartmentId")]
         public async Task<ActionResult<ResponseModel<List<CategoryDto>>>> GetAllCategoriesByDepartmentId(int DepartmentId) 
         {
@@ -37,7 +120,6 @@ namespace ComplaintSystem.Controllers
             }
             return Ok(new ResponseModel<List<CategoryDto>>(true, categories));
         }
-
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ResponseModel<CategoryDto>>> GetCategoryById(int id)

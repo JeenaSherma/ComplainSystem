@@ -1,4 +1,5 @@
 ﻿using ComplaintSystem.Dtos;
+using ComplaintSystem.Services.Implementations;
 using ComplaintSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -55,22 +56,21 @@ namespace ComplaintSystem.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ResponseModel<ComplainStatusDto>(false, null! , ex.Message));
             }
         }
-        [HttpPatch("{id}")]
-        public async Task <IActionResult> PutcomplainStatus(int id,  ComplainStatusDto ComplainStatusDto)
+
+        [HttpPatch]
+        public async Task<ActionResult<ResponseModel<ComplainStatusDto>>> ChangeComplainStatus(int complainId, int newComplainStatusId)
         {
-            if (id != ComplainStatusDto.Id)
-            {
-                return BadRequest();
-            }
             try
             {
-                return Ok(new ResponseModel<ComplainStatusDto>(true, await _complainStatusService.UpdateComplainStatus(id, ComplainStatusDto)));
+                var updatedComplainStatus = await _complainStatusService.UpdateComplainStatus(complainId, newComplainStatusId);
+                return Ok(new ResponseModel<ComplainStatusDto>(true, updatedComplainStatus));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new ResponseModel<ComplainStatusDto>(false, null!, ex.Message));
             }
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletecomplainStatus(int id)

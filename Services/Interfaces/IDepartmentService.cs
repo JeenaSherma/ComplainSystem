@@ -10,5 +10,6 @@ namespace ComplaintSystem.Services.Interfaces
         Task<DepartmentDto> SaveDepartment(DepartmentDto departmentDto);
         Task<DepartmentDto> UpdateDepartment(int DepartmentID , DepartmentDto departmentDto);
         Task<int> DeleteDepartment(int DepartmentID);
+        //Task<List<DepartmentDto>> GetDepartmentByWardId(int wardID);
     }
 }

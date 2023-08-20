@@ -9,31 +9,38 @@ namespace ComplaintSystem.Configs
         public AutoMapperConfig()
         {
             CreateMap<Municipality, MunicipalityDto>().ReverseMap();
-            CreateMap<Department, DepartmentDto>().ReverseMap();
-            CreateMap<CategoryDto, Category>();
-            CreateMap<Complain, ComplainDto>().ReverseMap();
+            CreateMap<Department, DepartmentDto>()
+             //ForMember(dest => dest.MunicipalityName, opt => opt.MapFrom(src => src.Municipality.MunicipalityName))
+            .ReverseMap();
+            CreateMap<Category, CategoryDto>()
+                //.ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName))
+
+                .ReverseMap();
+            //CreateMap<Complain, ComplainDto>()
+            //    .ForMember(dest => dest.TokenValue, opt => opt.MapFrom(src => src.Token.TokenValue))
+            //    .ReverseMap();
             CreateMap<ComplainerInfo, ComplainerInfoDto>().ReverseMap();
             CreateMap<ComplainStatus, ComplainStatusDto>().ReverseMap();
-            CreateMap<QRinfo, QRinfoDto>().ReverseMap();
-            CreateMap<Token, TokenDto>().ReverseMap();
-            CreateMap<Complain, ComplainAndComplainInfoDto>().ReverseMap();
-            CreateMap<ComplainerInfo, ComplainAndComplainInfoDto>().ReverseMap();
-
-           
-
-
-            CreateMap<ComplainerInfo, ComplainerInfoDto>()
-           .ForMember(dest => dest.ComplainText, opt => opt.MapFrom(src => src.Complain.ComplainText));
-            CreateMap<Department, DepartmentDto>()
-               .ForMember(dest => dest.MunicipalityName, opt => opt.MapFrom(src => src.Municipality.MunicipalityName));
-
-            CreateMap<Category, CategoryDto>()
-                .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.DepartmentName));
-
             CreateMap<QRinfo, QRinfoDto>()
-                 .ForMember(dest => dest.Municipalityname , opt => opt.MapFrom(src => src.Municipality.MunicipalityName));
+                //.ForMember(dest => dest.Municipalityname, opt => opt.MapFrom(src => src.Municipality.MunicipalityName))
+                .ReverseMap();
+            CreateMap<Token, TokenDto>().ReverseMap();
+            CreateMap<Complain, ComplainAndComplainInfoDto>()
+               //.ForMember(dest => dest.TokenValue, opt => opt.MapFrom(src => src.Token.TokenValue))
+               .ReverseMap();
+            CreateMap<ComplainerInfo, ComplainAndComplainInfoDto>().ReverseMap();
+            CreateMap<Municipality, InitializeDto>().ReverseMap();
+            CreateMap<Ward, InitializeDto>().ReverseMap();
+            CreateMap<Complain, ComplainAndComplainInfoDto>().ReverseMap();
+            CreateMap<Complain, ComplainDetailsDto>()
+                 //ForMember(dest => dest.complainerInfo , opt => opt.MapFrom(src => src.co ))
+                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            //.ForMember(dest => dest.ComplainText, opt => opt.MapFrom(src => src.ComplainText))
+            //.ForMember(dest => dest.complainStatus , opt => opt.MapFrom(src => src.ComplainStatus))
+            //.ForMember(dest => dest.complainerInfo, opt => opt.MapFrom(src => src.ComplainerInfo))
+                .ReverseMap();
+
 
         }
-
     }
 }

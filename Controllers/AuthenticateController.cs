@@ -1,4 +1,6 @@
 ﻿using ComplaintSystem.Dtos.Identity;
+using ComplaintSystem.Model;
+using ComplaintSystem.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,16 +15,18 @@ namespace ComplaintSystem.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IBranchService _branchService;
 
-        public AuthenticateController(UserManager<IdentityUser> userManager,
-        RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthenticateController(UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager, IConfiguration configuration, IBranchService branchService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            this._branchService = branchService;
         }
 
         [HttpGet]    
@@ -63,7 +67,7 @@ namespace ComplaintSystem.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo,
+                    expiration = token.ValidTo, 
                     role = userRoles
                 });
             }
@@ -78,7 +82,7 @@ namespace ComplaintSystem.Controllers
             if (userExists != null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
 
-            IdentityUser user = new()
+            ApplicationUser user = new()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -87,7 +91,10 @@ namespace ComplaintSystem.Controllers
 
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
+            {
+
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+            }
 
             if (!await _roleManager.RoleExistsAsync(model.Role))
                 await _roleManager.CreateAsync(new IdentityRole(model.Role));
@@ -101,7 +108,7 @@ namespace ComplaintSystem.Controllers
             return Ok(new Response { Status = "Success", Message = $"{model.Role} user created successfully!" });
         }
 
-        
+
         private JwtSecurityToken GetToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));

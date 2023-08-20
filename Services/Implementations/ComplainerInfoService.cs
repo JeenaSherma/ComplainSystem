@@ -53,8 +53,8 @@ namespace ComplaintSystem.Services.Implementations
                var complainerInfo=  _mapper.Map<ComplainerInfo>(complainerInfoDto);
                 await _uow.Repository<ComplainerInfo>().Add(complainerInfo);
                 await _uow.SaveChangesAsync();
-                var ResponseComplainerInfo = _uow.Repository<ComplainerInfo>().GetAllIncluding(x => x.Complain).Result.First(x => x.Id== complainerInfo.Id);
-                return _mapper.Map<ComplainerInfoDto>(ResponseComplainerInfo);
+                //var ResponseComplainerInfo = _uow.Repository<ComplainerInfo>().GetAllIncluding(x => x.Complain).Result.First(x => x.Id== complainerInfo.Id);
+                return _mapper.Map<ComplainerInfoDto>(complainerInfo);
             }
             catch(Exception ex)
             {

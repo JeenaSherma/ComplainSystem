@@ -22,6 +22,140 @@ namespace ComplaintSystem.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ComplaintSystem.Model.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("MunicipalityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("ComplaintSystem.Model.Branch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchNameInEnglish")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchNameInNepali")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BranchTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MunicipalityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OfficialWebsite")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("WardId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchTypeId");
+
+                    b.HasIndex("MunicipalityId");
+
+                    b.HasIndex("WardId");
+
+                    b.ToTable("branches");
+                });
+
+            modelBuilder.Entity("ComplaintSystem.Model.BranchType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("branchTypes");
+                });
+
             modelBuilder.Entity("ComplaintSystem.Model.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -108,8 +242,8 @@ namespace ComplaintSystem.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PhoneNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -156,7 +290,11 @@ namespace ComplaintSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("MunicipalityName")
+                    b.Property<string>("MunicipalityNameInEnglish")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MunicipalityNameInNepali")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -182,10 +320,30 @@ namespace ComplaintSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MunicipalityId")
-                        .IsUnique();
+                    b.HasIndex("MunicipalityId");
 
                     b.ToTable("qRinfos");
+                });
+
+            modelBuilder.Entity("ComplaintSystem.Model.RuralMunicipality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RuralMunicipalityNameInEnglish")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RuralMunicipalityNameInNepali")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ruralMunicipalities");
                 });
 
             modelBuilder.Entity("ComplaintSystem.Model.Token", b =>
@@ -200,7 +358,6 @@ namespace ComplaintSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TokenValue")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -209,6 +366,32 @@ namespace ComplaintSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("tokens");
+                });
+
+            modelBuilder.Entity("ComplaintSystem.Model.Ward", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MunicipalityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WardNameInEnglish")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WardNameInNepali")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MunicipalityId");
+
+                    b.ToTable("wards");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -261,71 +444,6 @@ namespace ComplaintSystem.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -409,10 +527,31 @@ namespace ComplaintSystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ComplaintSystem.Model.Branch", b =>
+                {
+                    b.HasOne("ComplaintSystem.Model.BranchType", "BranchType")
+                        .WithMany()
+                        .HasForeignKey("BranchTypeId");
+
+                    b.HasOne("ComplaintSystem.Model.Municipality", "Municipality")
+                        .WithMany()
+                        .HasForeignKey("MunicipalityId");
+
+                    b.HasOne("ComplaintSystem.Model.Ward", "Ward")
+                        .WithMany()
+                        .HasForeignKey("WardId");
+
+                    b.Navigation("BranchType");
+
+                    b.Navigation("Municipality");
+
+                    b.Navigation("Ward");
+                });
+
             modelBuilder.Entity("ComplaintSystem.Model.Category", b =>
                 {
                     b.HasOne("ComplaintSystem.Model.Department", "Department")
-                        .WithMany("Categories")
+                        .WithMany()
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -441,13 +580,11 @@ namespace ComplaintSystem.Migrations
 
             modelBuilder.Entity("ComplaintSystem.Model.ComplainerInfo", b =>
                 {
-                    b.HasOne("ComplaintSystem.Model.Complain", "Complain")
+                    b.HasOne("ComplaintSystem.Model.Complain", null)
                         .WithOne("ComplainerInfo")
                         .HasForeignKey("ComplaintSystem.Model.ComplainerInfo", "ComplainId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Complain");
                 });
 
             modelBuilder.Entity("ComplaintSystem.Model.Department", b =>
@@ -464,8 +601,8 @@ namespace ComplaintSystem.Migrations
             modelBuilder.Entity("ComplaintSystem.Model.QRinfo", b =>
                 {
                     b.HasOne("ComplaintSystem.Model.Municipality", "Municipality")
-                        .WithOne("QRinfo")
-                        .HasForeignKey("ComplaintSystem.Model.QRinfo", "MunicipalityId")
+                        .WithMany()
+                        .HasForeignKey("MunicipalityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -474,13 +611,22 @@ namespace ComplaintSystem.Migrations
 
             modelBuilder.Entity("ComplaintSystem.Model.Token", b =>
                 {
-                    b.HasOne("ComplaintSystem.Model.Complain", "Complain")
+                    b.HasOne("ComplaintSystem.Model.Complain", null)
                         .WithOne("Token")
                         .HasForeignKey("ComplaintSystem.Model.Token", "ComplainId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Complain");
+            modelBuilder.Entity("ComplaintSystem.Model.Ward", b =>
+                {
+                    b.HasOne("ComplaintSystem.Model.Municipality", "Municipality")
+                        .WithMany()
+                        .HasForeignKey("MunicipalityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Municipality");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -494,7 +640,7 @@ namespace ComplaintSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("ComplaintSystem.Model.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -503,7 +649,7 @@ namespace ComplaintSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("ComplaintSystem.Model.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -518,7 +664,7 @@ namespace ComplaintSystem.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("ComplaintSystem.Model.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -527,7 +673,7 @@ namespace ComplaintSystem.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("ComplaintSystem.Model.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -540,17 +686,6 @@ namespace ComplaintSystem.Migrations
                         .IsRequired();
 
                     b.Navigation("Token")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ComplaintSystem.Model.Department", b =>
-                {
-                    b.Navigation("Categories");
-                });
-
-            modelBuilder.Entity("ComplaintSystem.Model.Municipality", b =>
-                {
-                    b.Navigation("QRinfo")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

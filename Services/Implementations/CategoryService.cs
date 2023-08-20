@@ -8,6 +8,8 @@ using System.Linq.Expressions;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static QRCoder.PayloadGenerator.ShadowSocksConfig;
 using System.Runtime.Intrinsics.X86;
+using ComplaintSystem.Dtos.Pagination;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ComplaintSystem.Services.Implementations
 {
@@ -29,12 +31,6 @@ namespace ComplaintSystem.Services.Implementations
             {
                 var categories = await uow.Repository<Category>().GetAllIncluding(x=>x.Department);
                 var categoriesDto = _mapper.Map<List<CategoryDto>>(categories);
-                //foreach (var category in categoriesDto)
-                //{
-                //    var departmentName = await uow.Repository<Department>().GetById(category.DepartmentId);
-                //    category.DepartmentName = departmentName.DepartmentName;
-                //}
-
                 return categoriesDto;
             }
             catch (Exception ex)
@@ -42,7 +38,22 @@ namespace ComplaintSystem.Services.Implementations
                 throw new Exception("An Error occurred while getting the categories", ex);
             }
         }
+        public async Task<PagedListDto<CategoryDto>> GetAllCategoriesUsingPagination(PagingParams pagingParams)
+        {
+            try
+            {
+                var categoriesQuery = await uow.Repository<Category>().GetAllIncluding(x => x.Department);
 
+                var categoriesDto = _mapper.Map<List<CategoryDto>>(categoriesQuery); 
+
+                return new PagedListDto<CategoryDto>(
+                    categoriesDto, pagingParams.PageNumber, pagingParams.PageSize);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while getting the categories", ex);
+            }
+        } 
         public async Task<CategoryDto> GetCategoryById(int id)
         {
             try
@@ -74,14 +85,6 @@ namespace ComplaintSystem.Services.Implementations
                 throw new Exception("An Error occurred while getting the categories", ex);
             }
         }
-
-
-
-
-
-
-
-
 
 
         public async Task<CategoryDto> SaveCategory(CategoryDto categoryDto)

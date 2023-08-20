@@ -32,6 +32,10 @@ namespace ComplaintSystem.Repository.Implementations
         {
             return await _dbSet.ToListAsync();
         }
+        public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
         public async Task Add(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
@@ -53,7 +57,5 @@ namespace ComplaintSystem.Repository.Implementations
             }
             return await query.ToListAsync();
         }
-          
-
     }
 }

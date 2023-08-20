@@ -10,6 +10,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using ComplaintSystem.Services.QRGeneration;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc;
+using ComplaintSystem.Model;
+
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -17,11 +22,13 @@ ConfigurationManager configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ConnStr")));
-builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IQrRepository, QrRepository>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddTransient<DataSeeder>();
+builder.Services.AddLogging();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
@@ -33,8 +40,27 @@ builder.Services.AddScoped<IQRInfoService, QRinfoService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IComplainStatusService, ComplainStatusService>();
 builder.Services.AddScoped<IQrCodeService, QrCodeService>();
+builder.Services.AddScoped<IEmailSenderService,  EmailSenderService>();
+builder.Services.AddScoped<IBranchService, BranchService>();
+builder.Services.AddScoped<IInitilizerService, InitilizerService>();
+
+builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
 
+//builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+//builder.Services.AddScoped<IUrlHelper>(factory =>
+//{
+//    var actionContext = factory.GetService<IActionContextAccessor>()
+//                               .ActionContext;
+//    return new UrlHelper(actionContext);
+//});
+builder.Services.AddScoped<IUrlHelper>(factory =>
+{
+    var actionContext = factory.GetRequiredService<IActionContextAccessor>().ActionContext;
+    var urlHelperFactory = factory.GetRequiredService<IUrlHelperFactory>();
+
+    return urlHelperFactory.GetUrlHelper(actionContext);
+});
 
 
 builder.Services.AddAuthentication(options =>

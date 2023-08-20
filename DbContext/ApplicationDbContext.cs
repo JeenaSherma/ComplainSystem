@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ComplaintSystem.DbContext
 {
-    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -23,6 +23,11 @@ namespace ComplaintSystem.DbContext
         public DbSet<Municipality> municipalities { get; set; }
         public DbSet<QRinfo> qRinfos { get; set; }
         public DbSet<Token> tokens { get; set; }
+        public DbSet<Ward> wards { get; set; }
+        public DbSet<ApplicationUser> applicationUsers { get; set; }
+        public DbSet<BranchType> branchTypes { get; set; }
+        public DbSet<RuralMunicipality> ruralMunicipalities { get; set; }
+        public DbSet<Branch> branches { get; set; } 
         
     }
 }

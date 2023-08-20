@@ -6,7 +6,7 @@ namespace ComplaintSystem.Dtos
     {
         public int Id { get; set; }
         public string ComplainText { get; set; }
-        
-        
+        public string? TokenValue { get; set; }
+                
     }
 }

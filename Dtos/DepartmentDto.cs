@@ -9,7 +9,9 @@ namespace ComplaintSystem.Dtos
         public int DepartmentNumber { get; set; }
         public string DepartmentEmail { get; set; }
         public int MunicipalityId { get; set; }
-        public string? MunicipalityName {get; set;}
-        public List<Category>? Categories { get; set; }
+        public MunicipalityDto? municipality { get; set; }
+        //public int BranchId { get; set; }
+        //public BranchDto? branch { get; set; }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ComplaintSystem.Dtos;
 using ComplaintSystem.Model;
+using ComplaintSystem.Repository.Implementations;
 using ComplaintSystem.Repository.Interfaces;
 using ComplaintSystem.Services.Interfaces;
 
@@ -11,12 +12,14 @@ namespace ComplaintSystem.Services.Implementations
         
             private readonly IUnitOfWork uow;
             private readonly IMapper _mapper;
+        private readonly IEmailSenderService _emailSenderService;
 
-            public ComplainStatusService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ComplainStatusService(IUnitOfWork unitOfWork, IMapper mapper, IEmailSenderService emailSenderService)
             {
                 uow = unitOfWork;
                 this._mapper = mapper;
-            }
+            this._emailSenderService = emailSenderService;
+        }
 
             public async Task<List<ComplainStatusDto>> GetAllComplainStatus()
             {
@@ -62,21 +65,7 @@ namespace ComplaintSystem.Services.Implementations
                 }
             }
 
-            public async Task<ComplainStatusDto> UpdateComplainStatus(int ComplainStatusID, ComplainStatusDto ComplainStatusDto)
-            {
-                try
-                {
-                    var ComplainStatus = await uow.Repository<ComplainStatus>().GetById(ComplainStatusID) ?? throw new Exception("ComplainStatus not found");
-                    _mapper.Map(ComplainStatusDto, ComplainStatus);
-                    await uow.SaveChangesAsync();
-                    return _mapper.Map<ComplainStatusDto>(ComplainStatus);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("An error occurred while updating the ComplainStatus.", ex);
-                }
-
-            }
+           
             public async Task<int> DeleteComplainStatus(int ComplainStatusID)
             {
                 try
@@ -90,6 +79,48 @@ namespace ComplaintSystem.Services.Implementations
                     throw new Exception("An error occured while deleting ComplainStatus", ex);
                 }
             }
+        public async Task<ComplainStatusDto> UpdateComplainStatus(int complainId, int newStatusId)
+        {
 
+            try
+            {
+                var complain = uow.Repository<Complain>().GetAllIncluding(c => c.ComplainerInfo).Result.Where(c => c.Id == complainId).FirstOrDefault();
+                if (complain == null)
+                {
+                    throw new Exception("Complain not found");
+                }
+
+                var complainStatus = await uow.Repository<ComplainStatus>().GetById(newStatusId);
+                if (complainStatus == null)
+                {
+                    throw new Exception("Invalid status ID");
+                }
+
+                complain.ComplainStatusId = newStatusId;
+                await uow.SaveChangesAsync();
+
+                if (newStatusId == 5 || newStatusId == 6)
+                {
+                    ComplainerInfo complainerInfo = complain.ComplainerInfo;
+                    if (complainerInfo != null)
+                    {
+                        string userName = complainerInfo.Name;
+                        string email = complainerInfo.Email;
+                        string message = newStatusId == 5 ? "Dear " + userName + ", Your complain status is halted" : "Dear " + userName + ",  Your complain status is completed.";
+
+                        EmailSenderService emailSenderService = new EmailSenderService();
+                        emailSenderService.SendEmail(email, userName, message);
+                    }
+                }
+
+                var updatedComplainStatusDto = _mapper.Map<ComplainStatusDto>(complainStatus);
+                return updatedComplainStatusDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error updating complain status", ex);
+            }
         }
     }
+
+}

@@ -3,8 +3,8 @@
     public class Municipality
     {
         public int Id { get; set; }
-        public string MunicipalityName { get; set; }
-        public virtual QRinfo QRinfo { get; set; }
-       
+        public string MunicipalityNameInNepali { get; set; }
+        public string MunicipalityNameInEnglish { get; set; }
+
     }
 }

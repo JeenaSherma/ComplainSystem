@@ -41,37 +41,37 @@ namespace ComplaintSystem.Controllers
             return Ok(new ResponseModel<TokenDto>(true,token));
         }
 
-        [HttpPost]
-        public async Task<ActionResult<ResponseModel<TokenDto>>> SaveToken(int complainId)
-        {
-            try
-            {
-                var TokenDto = await _tokenService.SaveToken(complainId);
-                return Ok(new ResponseModel<TokenDto>(true, TokenDto));
+        //[HttpPost]
+        //public async Task<ActionResult<ResponseModel<TokenDto>>> SaveToken(int complainId)
+        //{
+        //    try
+        //    {
+        //        var TokenDto = await _tokenService.SaveToken(complainId);
+        //        return Ok(new ResponseModel<TokenDto>(true, TokenDto));
 
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseModel<TokenDto>(false, null!, ex.Message));
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new ResponseModel<TokenDto>(false, null!, ex.Message));
+        //    }
+        //}
            
-            [HttpPatch("{id}")]
-            public async Task<IActionResult> UpdateToken(int id, TokenDto TokenDto)
-            {
-                if (id != TokenDto.Id)
-                {
-                    return BadRequest();
-                }
-                try
-                {
-                    return Ok(new ResponseModel<TokenDto>(true, await _tokenService.UpdateToken(id, TokenDto)));
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-            }
+            //[HttpPatch("{id}")]
+            //public async Task<IActionResult> UpdateToken(int id, TokenDto TokenDto)
+            //{
+            //    if (id != TokenDto.Id)
+            //    {
+            //        return BadRequest();
+            //    }
+            //    try
+            //    {
+            //        return Ok(new ResponseModel<TokenDto>(true, await _tokenService.UpdateToken(id, TokenDto)));
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        return BadRequest(ex.Message);
+            //    }
+            //}
 
             [HttpDelete("{id}")]
             public async Task<IActionResult> DeleteToken(int id)

@@ -7,7 +7,7 @@ namespace ComplaintSystem.Services.Interfaces
         Task<List<ComplainStatusDto>> GetAllComplainStatus();
         Task<ComplainStatusDto> GetComplainStatusById(int id);
         Task<ComplainStatusDto> SaveComplainStatus(ComplainStatusDto ComplainStatusDto);
-        Task<ComplainStatusDto> UpdateComplainStatus(int ComplainStatusID, ComplainStatusDto ComplainStatusDto);
         Task<int> DeleteComplainStatus(int ComplainStatusID);
+        Task<ComplainStatusDto> UpdateComplainStatus(int ComplainId, int newStatusId);
     }
 }

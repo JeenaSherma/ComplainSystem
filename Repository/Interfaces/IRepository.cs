@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ComplaintSystem.Model;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,7 +14,8 @@ namespace ComplaintSystem.Repository.Interfaces
     {
         Task<TEntity> GetById(int id);
         Task<IEnumerable<TEntity>> GetAll();
-        Task<IEnumerable<TEntity>> GetAllIncluding(params Expression<Func<TEntity, object>>[] includeProperties);
+        Task<IEnumerable<TEntity>> GetAllIncluding(params Expression<Func<TEntity, object>>[] includeProperties);  
+        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
         Task Add(TEntity entity);
         void Update(TEntity entity);
         void Delete(TEntity entity);

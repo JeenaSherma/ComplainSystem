@@ -53,7 +53,7 @@ namespace ComplaintSystem.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PutMunicipality(int id, MunicipalityDto municipalityDto)
+        public async Task<IActionResult> UpdateMunicipality(int id, MunicipalityDto municipalityDto)
         {
             if (id != municipalityDto.Id)
             {

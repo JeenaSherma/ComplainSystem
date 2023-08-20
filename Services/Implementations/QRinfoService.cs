@@ -11,14 +11,13 @@ namespace ComplaintSystem.Services.Implementations
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-       
+
         private readonly IQrRepository _qrRepository;
 
-        public QRinfoService(IUnitOfWork uow, IMapper mapper, IRepository<QRinfo> qrinfoRepository, IQrRepository qrRepository)
+        public QRinfoService(IUnitOfWork uow, IMapper mapper, IQrRepository qrRepository)
         {
             this._uow = uow;
             this._mapper = mapper;
-           
             this._qrRepository = qrRepository;
         }
         public async Task<List<QRinfoDto>> GetAllQRInfo()
@@ -94,23 +93,20 @@ namespace ComplaintSystem.Services.Implementations
             {
                 throw new Exception("Error occured while deleting QRInfo", ex);
             }
-
-
-
         }
-       
-      public async Task<QRinfoDto> GetQrinfoByMunicipalityId(int MunicipalityId)
+
+        public async Task<QRinfoDto> GetQrinfoByMunicipalityId(int MunicipalityId)
         {
-         try
+            try
             {
                 var qrInfo = await _qrRepository.GetQRinfoByMunicipalityId(MunicipalityId);
-               var qrinfoDto = _mapper.Map<QRinfoDto>(qrInfo);
+                var qrinfoDto = _mapper.Map<QRinfoDto>(qrInfo);
                 return qrinfoDto;
             }
             catch (Exception ex)
             {
                 throw new Exception("Error trying to get QRInfo", ex);
-}
+            }
         }
-}
+    }
 }

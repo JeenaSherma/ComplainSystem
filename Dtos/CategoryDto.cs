@@ -8,7 +8,7 @@ namespace ComplaintSystem.Dtos
         public int Id { get; set; }
         public string CategoryName { get; set; } 
         public int DepartmentId { get; set; }
-        public string? DepartmentName { get; set; }
+        public virtual DepartmentDto? Department { get; set; }
         
     }
 }
